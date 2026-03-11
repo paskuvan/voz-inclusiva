@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Voz Inclusiva – Tu voz en palabras</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0f1e;
+      --surface: #111827;
+      --surface2: #1a2436;
+      --border: #1e2d45;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #34d399;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --danger: #f87171;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(56,189,248,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(129,140,248,0.1) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(52,211,153,0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0 2.5rem;
+    }
+
+    .logo-ring {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      margin-bottom: 1.2rem;
+      position: relative;
+      animation: pulse-ring 3s ease-in-out infinite;
+    }
+
+    .logo-ring::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(56,189,248,0.2);
+      animation: pulse-ring 3s ease-in-out infinite 0.5s;
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(56,189,248,0.3); }
+      50%       { box-shadow: 0 0 0 12px rgba(56,189,248,0); }
+    }
+
+    .logo-icon { font-size: 2rem; filter: drop-shadow(0 0 8px rgba(56,189,248,0.6)); }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #e2e8f0 30%, var(--accent) 70%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline { margin-top: 0.75rem; font-size: 1rem; color: var(--muted); font-weight: 300; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 1rem; padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(52,211,153,0.3);
+      background: rgba(52,211,153,0.08);
+      color: var(--accent3);
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+
+    /* API status indicator */
+    .api-status {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      margin-top: 0.75rem; padding: 0.3rem 0.9rem;
+      border-radius: 999px; font-size: 0.75rem; font-weight: 500;
+    }
+    .api-status.online  { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--accent3); }
+    .api-status.offline { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--danger); }
+    .api-status.checking { background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); color: var(--accent); }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .dot.pulse { animation: dot-pulse 1.5s ease-in-out infinite; }
+    @keyframes dot-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.3s;
+    }
+    .card:hover { border-color: rgba(56,189,248,0.25); }
+
+    .card-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .card-label::before {
+      content: ''; display: block;
+      width: 20px; height: 2px;
+      background: var(--accent); border-radius: 2px;
+    }
+
+    textarea {
+      width: 100%; min-height: 160px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem; font-weight: 300; line-height: 1.7;
+      resize: vertical;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    textarea::placeholder { color: var(--muted); }
+    textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,0.12); }
+
+    .char-count { text-align: right; font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; }
+    .char-count.warn { color: var(--danger); }
+
+    .controls-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 500px) { .controls-grid { grid-template-columns: 1fr; } }
+
+    .control-group label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--muted); margin-bottom: 0.5rem; }
+
+    select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem 2.5rem 0.65rem 1rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem; outline: none; cursor: pointer;
+      transition: border-color 0.2s; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2364748b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+    }
+    select:focus { border-color: var(--accent); }
+
+    .range-wrapper { display: flex; align-items: center; gap: 0.75rem; }
+    input[type=range] {
+      flex: 1; appearance: none;
+      height: 4px; background: var(--border);
+      border-radius: 2px; outline: none; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 8px rgba(56,189,248,0.5);
+      transition: transform 0.15s;
+    }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+    .range-value { min-width: 36px; text-align: center; font-size: 0.85rem; font-weight: 600; color: var(--accent); font-family: 'Syne', sans-serif; }
+    .pitch-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+
+    .btn-main {
+      width: 100%; padding: 1.1rem 2rem;
+      border-radius: 14px; border: none;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #0a0f1e;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.05em;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(56,189,248,0.25);
+      margin-bottom: 1rem;
+    }
+    .btn-main:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 32px rgba(56,189,248,0.35); }
+    .btn-main:active { transform: translateY(0); }
+    .btn-main:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      flex: 1; padding: 0.85rem 1.2rem;
+      border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover { background: var(--border); border-color: var(--accent); }
+    .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 0.75rem; }
+
+    #player-section { display: none; animation: fadeUp 0.4s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .waveform { display: flex; align-items: center; justify-content: center; gap: 4px; height: 48px; margin: 1rem 0; }
+    .wave-bar { width: 4px; border-radius: 2px; background: var(--accent); opacity: 0.7; transform-origin: bottom; }
+    .wave-bar.active { animation: wave-anim 0.8s ease-in-out infinite; }
+    @keyframes wave-anim { 0%,100%{transform:scaleY(0.3);opacity:0.4} 50%{transform:scaleY(1);opacity:1} }
+
+    .player-info { display: flex; align-items: center; justify-content: space-between; font-size: 0.82rem; color: var(--muted); margin-top: 0.5rem; }
+
+    .status { text-align: center; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.88rem; font-weight: 500; margin-bottom: 1rem; display: none; }
+    .status.loading { display: block; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2); color: var(--accent); }
+    .status.error   { display: block; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); color: var(--danger); }
+    .status.success { display: block; background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2); color: var(--accent3); }
+
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(56,189,248,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 0.4rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .presets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    .preset-btn {
+      padding: 0.35rem 0.85rem; border-radius: 999px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 0.78rem; cursor: pointer;
+      transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .preset-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.08); }
+
+    .dl-badge {
+      display: none; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 1rem; border-radius: 999px;
+      background: rgba(52,211,153,0.15);
+      border: 1px solid rgba(52,211,153,0.3);
+      color: var(--accent3); font-size: 0.8rem; font-weight: 500;
+      margin-top: 0.75rem;
+    }
+
+    .tips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 0.5rem; }
+    @media (max-width: 500px) { .tips { grid-template-columns: 1fr; } }
+    .tip { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .tip strong { display: block; color: var(--text); font-weight: 600; margin-bottom: 0.3rem; font-size: 0.85rem; }
+    .tip-icon { font-size: 1.2rem; display: block; margin-bottom: 0.5rem; }
+
+    footer { text-align: center; padding-top: 3rem; font-size: 0.78rem; color: var(--muted); line-height: 1.8; }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo-ring"><span class="logo-icon">🤟</span></div>
+    <h1>Voz Inclusiva</h1>
+    <p class="tagline">Convierte tus palabras en voz para tus videos y reels</p>
+    <span class="badge">✦ Herramienta gratuita para la comunidad sorda</span><br>
+    <span class="api-status checking" id="apiStatus">
+      <span class="dot pulse"></span> Conectando al servidor…
+    </span>
+  </header>
+
+  <!-- Texto -->
+  <div class="card">
+    <div class="card-label">Tu mensaje</div>
+    <textarea id="texto" placeholder="Escribe aquí lo que quieres que se escuche en tu video…" maxlength="1000"></textarea>
+    <div class="char-count"><span id="charNum">0</span> / 1000 caracteres</div>
+    <div class="presets">
+      <button class="preset-btn" onclick="insertPreset('¡Hola! Este video fue creado por una persona sorda.')">👋 Saludo</button>
+      <button class="preset-btn" onclick="insertPreset('Muchas gracias por ver mi contenido.')">🙏 Gracias</button>
+      <button class="preset-btn" onclick="insertPreset('Activa los subtítulos para seguir este video.')">📝 Subtítulos</button>
+      <button class="preset-btn" onclick="insertPreset('Sígueme para más contenido inclusivo.')">❤️ Sígueme</button>
+    </div>
+  </div>
+
+  <!-- Controles -->
+  <div class="card">
+    <div class="card-label">Configuración de voz</div>
+    <div class="controls-grid">
+
+      <div class="control-group">
+        <label>🌍 Idioma y variante</label>
+        <select id="variante">
+          <option value="es-MX">🇲🇽 Español México</option>
+          <option value="es-ES">🇪🇸 Español España</option>
+          <option value="es-AR">🇦🇷 Español Argentina</option>
+          <option value="es-CO">🇨🇴 Español Colombia</option>
+          <option value="es-CL">🇨🇱 Español Chile</option>
+          <option value="es-PE">🇵🇪 Español Perú</option>
+          <option value="es-VE">🇻🇪 Español Venezuela</option>
+          <option value="es-US">🇺🇸 Español Latino</option>
+          <option value="en-US">🇺🇸 Inglés US</option>
+          <option value="en-GB">🇬🇧 Inglés UK</option>
+          <option value="pt-BR">🇧🇷 Portugués Brasil</option>
+          <option value="fr-FR">🇫🇷 Francés</option>
+          <option value="de-DE">🇩🇪 Alemán</option>
+          <option value="it-IT">🇮🇹 Italiano</option>
+          <option value="ja-JP">🇯🇵 Japonés</option>
+          <option value="ko-KR">🇰🇷 Coreano</option>
+          <option value="zh-CN">🇨🇳 Chino</option>
+          <option value="ar">🇸🇦 Árabe</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>⚡ Velocidad</label>
+        <div class="range-wrapper">
+          <input type="range" id="velocidad" min="0.5" max="2" step="0.1" value="1"
+                 oninput="document.getElementById('velVal').textContent=this.value+'×'">
+          <span class="range-value" id="velVal">1×</span>
+        </div>
+        <div class="pitch-labels"><span>Lento</span><span>Normal</span><span>Rápido</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status" id="statusMsg"></div>
+
+  <!-- Botón generar -->
+  <button class="btn-main" id="btnGenerar" onclick="generarVoz()">
+    <span>🎙</span> Generar voz
+  </button>
+
+  <!-- Player -->
+  <div class="card" id="player-section">
+    <div class="card-label">Audio generado</div>
+    <div class="waveform" id="waveform"></div>
+    <audio id="audioPlayer" controls style="width:100%;margin-top:0.5rem;border-radius:8px;"></audio>
+    <div class="btn-row" style="margin-top:1rem;">
+      <button class="btn-secondary" id="btnDescargar" onclick="descargarAudio()">⬇ Descargar MP3</button>
+      <button class="btn-secondary" onclick="resetPlayer()">✕ Limpiar</button>
+    </div>
+    <div class="dl-badge" id="dlBadge">✦ Audio listo para tu video</div>
+  </div>
+
+  <!-- Tips -->
+  <div class="card">
+    <div class="card-label">Cómo usarlo en tus reels</div>
+    <div class="tips">
+      <div class="tip"><span class="tip-icon">✍️</span><strong>Paso 1</strong>Escribe tu mensaje y elige el idioma.</div>
+      <div class="tip"><span class="tip-icon">⬇️</span><strong>Paso 2</strong>Descarga el audio MP3 a tu teléfono.</div>
+      <div class="tip"><span class="tip-icon">🎬</span><strong>Paso 3</strong>En Instagram o TikTok, importa el audio como voz en off.</div>
+    </div>
+  </div>
+
+  <footer>
+    Hecho con ❤️ para la comunidad sorda · Funciona en web y móvil<br>
+    <a href="http://localhost:8000/docs" target="_blank">API Docs</a> · Sin datos guardados · Completamente privado
+  </footer>
+
+</div>
+
+<script>
+  // ─── CONFIGURACIÓN ───────────────────────────────────────────────
+  // Cambia esta URL después del deploy en Railway:
+    const API_URL = "https://voz-inclusiva.up.railway.app";
+  // Ejemplo producción: const API_URL = "https://voz-inclusiva.up.railway.app";
+  // ─────────────────────────────────────────────────────────────────
+
+  // Waveform bars
+  const waveform = document.getElementById('waveform');
+  [20,35,55,70,85,60,45,80,90,65,50,75,88,60,40,55,70,45,30,50].forEach((h, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'wave-bar';
+    bar.style.height = `${h}%`;
+    bar.style.animationDelay = `${i * 0.06}s`;
+    waveform.appendChild(bar);
+  });
+
+  function setWaveActive(active) {
+    document.querySelectorAll('.wave-bar').forEach(b => b.classList.toggle('active', active));
+  }
+
+  // Char counter
+  document.getElementById('texto').addEventListener('input', function() {
+    const n = this.value.length;
+    document.getElementById('charNum').textContent = n;
+    document.getElementById('charNum').parentElement.classList.toggle('warn', n > 900);
+  });
+
+  // Presets
+  function insertPreset(text) {
+    const ta = document.getElementById('texto');
+    ta.value = text;
+    ta.dispatchEvent(new Event('input'));
+  }
+
+  // Status
+  function showStatus(msg, type) {
+    const el = document.getElementById('statusMsg');
+    el.className = `status ${type}`;
+    el.innerHTML = type === 'loading' ? `<span class="spinner"></span>${msg}` : msg;
+  }
+  function hideStatus() {
+    document.getElementById('statusMsg').className = 'status';
+  }
+
+  // ─── Verificar conexión al backend ───────────────────────────────
+  async function checkAPI() {
+    const el = document.getElementById('apiStatus');
+    try {
+      const res = await fetch(`${API_URL}/health`);
+      if (res.ok) {
+        el.className = 'api-status online';
+        el.innerHTML = '<span class="dot"></span> Servidor conectado';
+      } else throw new Error();
+    } catch {
+      el.className = 'api-status offline';
+      el.innerHTML = '<span class="dot"></span> Servidor desconectado — asegúrate de correr el backend';
+    }
+  }
+  checkAPI();
+
+  // ─── Generar voz desde el backend ────────────────────────────────
+  async function generarVoz() {
+    const texto = document.getElementById('texto').value.trim();
+    if (!texto) { showStatus('⚠️ Por favor escribe un mensaje primero.', 'error'); return; }
+
+    const btn = document.getElementById('btnGenerar');
+    btn.disabled = true;
+    showStatus('Generando audio con el backend…', 'loading');
+    setWaveActive(true);
+
+    try {
+      const res = await fetch(`${API_URL}/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          texto,
+          variante: document.getElementById('variante').value,
+          lento: parseFloat(document.getElementById('velocidad').value) < 0.8,
+          formato: 'mp3'
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'Error en el servidor');
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Cargar en el reproductor
+      const audio = document.getElementById('audioPlayer');
+      audio.src = url;
+      audio.load();
+
+      // Guardar para descarga
+      document.getElementById('btnDescargar').dataset.url = url;
+
+      showStatus('✦ ¡Audio generado con éxito!', 'success');
+      document.getElementById('player-section').style.display = 'block';
+      document.getElementById('dlBadge').style.display = 'flex';
+
+    } catch (err) {
+      showStatus(`❌ ${err.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+      setWaveActive(false);
+    }
+  }
+
+  // ─── Descargar MP3 ───────────────────────────────────────────────
+  function descargarAudio() {
+    const url = document.getElementById('btnDescargar').dataset.url;
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'voz-inclusiva.mp3';
+    a.click();
+  }
+
+  // ─── Limpiar ─────────────────────────────────────────────────────
+  function resetPlayer() {
+    const audio = document.getElementById('audioPlayer');
+    audio.pause();
+    audio.src = '';
+    setWaveActive(false);
+    document.getElementById('player-section').style.display = 'none';
+    document.getElementById('dlBadge').style.display = 'none';
+    hideStatus();
+  }
+</script>
+
+</body>
+</html>
